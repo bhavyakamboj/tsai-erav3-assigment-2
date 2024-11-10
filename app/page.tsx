@@ -4,6 +4,7 @@
 // }
 
 import { redirect } from 'next/navigation';
+import Operations from './operations/page';
 
 export default function Home() {
     // Redirect to '/operations' if needed
@@ -96,21 +97,12 @@ export default function Home() {
             </nav>
             <header className="bg-white shadow">
                 <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+                    <h3 className="text-xl font-bold tracking-tight text-gray-900">Dashboard</h3>
                 </div>
             </header>
             <main>
-                <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    {/* Hero section */}
-                    <div className="flex items-center justify-center h-screen bg-gray-100">
-                        <div className="text-center">
-                            <h1 className="text-4xl font-bold text-gray-800 mb-4">Text Pre-Processing</h1>
-                            <p className="text-lg text-gray-600 mb-8">Select the option to perform pre-processing operations</p>
-                            <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700">
-                                Get Started
-                            </button>
-                        </div>
-                    </div>
+            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                    <Operations />
                 </div>
             </main>
         </div>
