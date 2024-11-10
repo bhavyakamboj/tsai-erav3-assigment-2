@@ -4,9 +4,9 @@ import React from 'react';
 
 export default function Home() {
   return (
-    <div style={{ textAlign: 'center', padding: '50px' }}>
-      <h1>What would you like to process?</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginTop: '40px' }}>
+    <div style={containerStyle}>
+      <Hero />
+      <div style={iconContainerStyle}>
         <Link href="/text" style={linkStyle}>
           <FaFileAlt size={50} />
           <p>Text</p>
@@ -27,6 +27,33 @@ export default function Home() {
     </div>
   );
 }
+
+function Hero() {
+  return (
+    <div style={heroStyle}>
+      <h1>Multi Modal Processing and Augmentation</h1>
+    </div>
+  );
+}
+
+const containerStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  minHeight: '100vh',
+  textAlign: 'center',
+};
+
+const heroStyle: React.CSSProperties = {
+  marginBottom: '40px',
+};
+
+const iconContainerStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  gap: '20px',
+};
 
 const linkStyle: React.CSSProperties = {
   display: 'flex',
