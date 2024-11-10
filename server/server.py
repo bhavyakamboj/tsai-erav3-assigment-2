@@ -12,27 +12,33 @@ nltk.download('stopwords', quiet=True)
 @app.post("/process-text/")
 async def process_text(
     text: str = Body(..., embed=True),
-    operations: List[str] = Query(None)
+    lowercase: bool = Query(False),
+    punctuation_special_chars: bool = Query(False),
+    stop_words: bool = Query(False),
+    urls: bool = Query(False),
+    html: bool = Query(False)
 ):
     result = text
 
-    if operations:
-        for operation in operations:
-            if operation == "lowercase":
-                result = result.lower()
-            elif operation == "punctuation-special-chars":
-                punctuation_pattern = r'[^\w\s]'
-                result = re.sub(punctuation_pattern, '', result)
-            elif operation == "stop-words":
-                stop_words = set(stopwords.words('english'))
-                word_tokens = result.split()
-                result = ' '.join([word for word in word_tokens if word.lower() not in stop_words])
-            elif operation == "urls":
-                url_pattern = re.compile(r'https?://\S+|www\.\S+')
-                result = url_pattern.sub(r'', result)
-            elif operation == "html":
-                html_tags_pattern = r'<.*?>'
-                result = re.sub(html_tags_pattern, '', result)
+    if lowercase:
+        result = result.lower()
+    
+    if html:
+        html_tags_pattern = r'<.*?>'
+        result = re.sub(html_tags_pattern, '', result)
+
+    if urls:
+        url_pattern = re.compile(r'https?://\S+|www\.\S+')
+        result = url_pattern.sub(r'', result)
+
+    if punctuation_special_chars:
+        punctuation_pattern = r'[^\w\s]'
+        result = re.sub(punctuation_pattern, '', result)
+    
+    if stop_words:
+        stop_words_set = set(stopwords.words('english'))
+        word_tokens = result.split()
+        result = ' '.join([word for word in word_tokens if word.lower() not in stop_words_set])
 
     return {"processed_text": result}
 
