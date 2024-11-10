@@ -1,134 +1,93 @@
 {
-  "openapi": "3.0.2",
+  "openapi": "3.0.3",
   "info": {
-    "title": "FastAPI",
-    "version": "0.1.0"
+    "title": "Text Processing API",
+    "version": "1.0.0",
+    "description": "An API for processing text with various operations"
   },
   "paths": {
     "/process-text/": {
       "post": {
-        "summary": "Process Text",
-        "operationId": "process_text_process_text__post",
-        "parameters": [
-          {
-            "required": false,
-            "schema": {
-              "title": "Operations",
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "lowercase",
-                  "punctuation-special-chars",
-                  "stop-words",
-                  "urls",
-                  "html"
-                ]
-              }
-            },
-            "name": "operations",
-            "in": "query",
-            "description": "Optional list of text processing operations to apply",
-            "style": "form",
-            "explode": true
-          }
-        ],
+        "summary": "Process text",
+        "description": "Apply various text processing operations to the input text",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "title": "Body",
                 "type": "object",
                 "properties": {
                   "text": {
-                    "title": "Text",
-                    "type": "string",
-                    "description": "The input text to process"
+                    "type": "string"
                   }
                 },
                 "required": ["text"]
               }
             }
-          },
-          "required": true
+          }
         },
+        "parameters": [
+          {
+            "name": "lowercase",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Convert text to lowercase"
+          },
+          {
+            "name": "punctuation_special_chars",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Remove punctuation and special characters"
+          },
+          {
+            "name": "stop_words",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Remove stop words"
+          },
+          {
+            "name": "urls",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Remove URLs"
+          },
+          {
+            "name": "html",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Remove HTML tags"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Process Text Process Text  Post",
                   "type": "object",
                   "properties": {
                     "processed_text": {
-                      "title": "Processed Text",
-                      "type": "string",
-                      "description": "The processed text after applying the specified operations"
+                      "type": "string"
                     }
                   }
                 }
               }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "HTTPValidationError": {
-        "title": "HTTPValidationError",
-        "type": "object",
-        "properties": {
-          "detail": {
-            "title": "Detail",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            }
-          }
-        }
-      },
-      "ValidationError": {
-        "title": "ValidationError",
-        "required": ["loc", "msg", "type"],
-        "type": "object",
-        "properties": {
-          "loc": {
-            "title": "Location",
-            "type": "array",
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            }
-          },
-          "msg": {
-            "title": "Message",
-            "type": "string"
-          },
-          "type": {
-            "title": "Error Type",
-            "type": "string"
-          }
-        }
-      }
+            }}}}
     }
   }
 }
