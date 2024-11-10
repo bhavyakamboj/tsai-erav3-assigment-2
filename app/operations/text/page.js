@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 export default function TextOperations() {
-  const [inputText, setInputText] = useState("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Since the 1500s, Lorem Ipsum has been the industry's standard dummy text. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Visit https://example.com for more info!");
+  const [inputText, setInputText] = useState("Lorem Ipsum is SIMPLY Dummy tExT of THE printing and typesetting industry. Since the 1500s, Lorem Ipsum has been the industry's standard dummy text. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Visit https://example.com for more info!");
   const [processedText, setProcessedText] = useState("");
   const [augmentedText, setAugmentedText] = useState("");
   const [options, setOptions] = useState({
@@ -53,6 +53,22 @@ export default function TextOperations() {
     } catch (error) {
       console.error('Error:', error);
     }
+  };
+
+  const handleReset = () => {
+    setInputText("Lorem Ipsum is SIMPLY Dummy tExT of THE printing and typesetting industry. Since the 1500s, Lorem Ipsum has been the industry's standard dummy text. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Visit https://example.com for more info!");
+    setProcessedText("");
+    setAugmentedText("");
+    setOptions({
+      lowercasing: false,
+      'remove-punctuation': false,
+      'stop-words': false,
+      'remove-urls': false,
+      'remove-html': false,
+      'stemming-lemmatization': false,
+      'tokenization': false,
+      'text-normalization': false,
+    });
   };
 
   return (
@@ -271,6 +287,12 @@ export default function TextOperations() {
           placeholder="Result of augmentation here..."
           disabled />
       </div>
+      <button 
+        className="mt-8 px-6 py-3 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700"
+        onClick={handleReset}
+      >
+        Reset
+      </button>
     </div>
   );
 }
