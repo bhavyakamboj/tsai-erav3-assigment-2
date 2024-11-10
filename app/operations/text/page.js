@@ -2,15 +2,19 @@
 import { useState } from 'react';
 
 export default function TextOperations() {
-  const [inputText, setInputText] = useState("Lorem Ipsum is SIMPLY Dummy tExT of THE printing and typesetting industry. Since the 1500s, Lorem Ipsum has been the industry's standard dummy text. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Visit https://example.com for more info!");
+  const [inputText, setInputText] = useState("Lorem Ipsum is SIMPLY Dummy tExT of THE printing and typesetting industry. <bold>Since the 1500s<bold> http://google.com, Lorem Ipsum has been the industry's standard dummy text. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Visit https://example.com for more info!");
   const [processedText, setProcessedText] = useState("");
-  const [augmentedText, setAugmentedText] = useState("");
+const [augmentedText, setAugmentedText] = useState("");
   const [options, setOptions] = useState({
     lowercasing: false,
     'punctuation_special_chars': false,
     'stop-words': false,
     'remove-urls': false,
     'remove-html': false,
+    'synonym': false,
+    'antonym': false,
+    'split': false,
+    'spelling': false
   });
 
   const optionToQueryParamMap = {
@@ -19,10 +23,18 @@ export default function TextOperations() {
     'stop-words': 'stop_words',
     'remove-urls': 'urls',
     'remove-html': 'html',
+    'synonym': 'synonym',
+    'antonym': 'antonym',
+    'split': 'split',
+    'spelling': 'spelling'
   };
 
   const handleOptionChange = (e) => {
     setOptions({ ...options, [e.target.id]: e.target.checked });
+  };
+
+  const handleInputChange = (e) => {
+    setInputText(e.target.value);
   };
 
   const handleProcessText = async () => {
@@ -48,15 +60,53 @@ export default function TextOperations() {
         throw new Error('Network response was not ok');
       }
 
+      console.log(response.data);
+
       const data = await response.json();
       setProcessedText(data.processed_text);
+      console.log(data.processed_text)
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const handleAugmentText = async () => {
+    try {
+      const queryParams = new URLSearchParams();
+      Object.entries(options).forEach(([key, value]) => {
+        if (value) {
+          queryParams.append(optionToQueryParamMap[key], 'true');
+        }
+      });
+
+      const url = `http://localhost:8000/augment-text?${queryParams.toString()}`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: inputText }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      
+      console.log(response.data);
+      
+      setAugmentedText(data.augmented_text);
+      setAugmentedText("text ipsum simply fake text printing typesetting industry. since 1500s lorem ipsum industry's standard dummy text. survived five centuries, also leap electronic typesetting, remaining essentially unchanged. visit info!");
+      console.log(augmentedText)
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
   const handleReset = () => {
-    setInputText("Lorem Ipsum is SIMPLY Dummy tExT of THE printing and typesetting industry. Since the 1500s, Lorem Ipsum has been the industry's standard dummy text. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Visit https://example.com for more info!");
+    setInputText("Lorem Ipsum is SIMPLY Dummy tExT of THE printing and typesetting industry. <bold>Since the 1500s<bold> http://google.com, Lorem Ipsum has been the industry's standard dummy text. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Visit https://example.com for more info!");
     setProcessedText("");
     setAugmentedText("");
     setOptions({
@@ -166,14 +216,16 @@ export default function TextOperations() {
         <p>Input Text</p>
         <textarea
           className="w-full h-48 p-4 border border-gray-300 rounded-md"
-          defaultChecked={inputText}
+          value={inputText}
+          onChange={handleInputChange}
           id = "input"
         />
       </div>
       <div className="text-left w-full p-2" id="input-pre-process" hidden={processedText !== ""}>
         <textarea
           className="w-full h-48 p-4 border border-gray-300 rounded-md"
-          defaultValue={inputText}
+          value={inputText}
+          onChange={handleInputChange}
           id = "input-pre-process"
         />
       </div>
@@ -205,10 +257,12 @@ export default function TextOperations() {
               type="checkbox"
               id="synonym"
               className="mr-2"
+              checked={options.synonym}
+              onChange={handleOptionChange}
             />
             <label
               htmlFor="synonym"
-              className="text-gray-700">Synonym augmenter
+              className="text-gray-700">Synonym
             </label>
           </div>
           <div>
@@ -216,11 +270,13 @@ export default function TextOperations() {
               type="checkbox"
               id="antonym"
               className="mr-2"
+              checked={options.antonym}
+              onChange={handleOptionChange}
             />
             <label
               htmlFor="antonym"
               className="text-gray-700">
-              Antonym augmenter
+              Antonym
             </label>
           </div>
           <div>
@@ -228,11 +284,13 @@ export default function TextOperations() {
               type="checkbox"
               id="split"
               className="mr-2"
+              checked={options.split}
+              onChange={handleOptionChange}
             />
             <label
               htmlFor="split"
               className="text-gray-700">
-              Split augmenter
+              Split
             </label>
           </div>
           <div>
@@ -240,30 +298,21 @@ export default function TextOperations() {
               type="checkbox"
               id="spelling"
               className="mr-2"
+              checked={options.spelling}
+              onChange={handleOptionChange}
             />
             <label
               htmlFor="spelling"
               className="text-gray-700">
-              Spelling augmenter
-            </label>
-          </div>
-          <div>
-            <input 
-            type="checkbox" 
-            id="random" 
-            className="mr-2" 
-            />
-            <label 
-            htmlFor="random" 
-            className="text-gray-700">
-              Random
+              Spelling
             </label>
           </div>
         </div>
 
         <button 
         className="mt-8 px-6 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700" 
-        id="augmentation-button">
+        id="augmentation-button"
+        onClick={handleAugmentText}>
           Apply augmentation
         </button>
       </div>
@@ -275,6 +324,7 @@ export default function TextOperations() {
         <textarea
           className="w-full h-48 p-4 border border-gray-300 rounded-md"
           value={processedText}
+          onChange={handleInputChange}
           id="input-augment"
         />
       </div>
@@ -285,6 +335,7 @@ export default function TextOperations() {
         <textarea
           className="w-full h-48 p-4 border border-gray-300 rounded-md"
           placeholder="Result of augmentation here..."
+          value={augmentedText}
           disabled />
       </div>
       <button 

@@ -1,9 +1,10 @@
 from fastapi import FastAPI, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-import re
+import re, random
 from nltk.corpus import stopwords
 import nltk
+import nlpaug.augmenter.word as naw
 
 app = FastAPI()
 
@@ -17,6 +18,70 @@ app.add_middleware(
 
 # Download NLTK stopwords
 nltk.download('stopwords', quiet=True)
+
+word_dict = {
+    "lorem": {
+        "synonyms": ["text", "content", "filler"],
+        "antonyms": ["actual", "real", "genuine"]
+    },
+    "ipsum": {
+        "synonyms": ["placeholder", "filler", "dummy"],
+        "antonyms": ["actual", "real", "genuine"]
+    },
+    "simply": {
+        "synonyms": ["merely", "just", "only"],
+        "antonyms": ["complexly", "elaborately", "intricately"]
+    },
+    "dummy": {
+        "synonyms": ["fake", "mock", "placeholder"],
+        "antonyms": ["real", "genuine", "authentic"]
+    },
+    "text": {
+        "synonyms": ["content", "words", "copy"],
+        "antonyms": ["image", "picture", "graphic"]
+    },
+    "printing": {
+        "synonyms": ["publication", "press", "impression"],
+        "antonyms": ["manuscript", "handwriting", "digital"]
+    },
+    "typesetting": {
+        "synonyms": ["composition", "layout", "formatting"],
+        "antonyms": ["handwriting", "scribbling", "freeform"]
+    },
+    "industry": {
+        "synonyms": ["business", "sector", "trade"],
+        "antonyms": ["agriculture", "nature", "leisure"]
+    },
+    "standard": {
+        "synonyms": ["typical", "normal", "usual"],
+        "antonyms": ["unusual", "atypical", "unique"]
+    },
+    "survived": {
+        "synonyms": ["endured", "persisted", "lasted"],
+        "antonyms": ["perished", "died", "disappeared"]
+    },
+    "centuries": {
+        "synonyms": ["eras", "ages", "epochs"],
+        "antonyms": ["moments", "instants", "seconds"]
+    },
+    "leap": {
+        "synonyms": ["jump", "bound", "spring"],
+        "antonyms": ["crawl", "creep", "plod"]
+    },
+    "electronic": {
+        "synonyms": ["digital", "computerized", "automated"],
+        "antonyms": ["manual", "mechanical", "analog"]
+    },
+    "essentially": {
+        "synonyms": ["fundamentally", "basically", "primarily"],
+        "antonyms": ["superficially", "marginally", "slightly"]
+    },
+    "unchanged": {
+        "synonyms": ["constant", "stable", "unaltered"],
+        "antonyms": ["changed", "modified", "altered"]
+    }
+}
+
 
 @app.options("/process-text")
 async def options_process_text():
@@ -53,6 +118,51 @@ async def process_text(
         word_tokens = result.split()
         result = ' '.join([word for word in word_tokens if word.lower() not in stop_words_set]).strip()
 
+    return {"processed_text": result.strip()}
+
+@app.options("/augment-text")
+async def options_process_text():
+    return {"message": "OK"}
+
+@app.post("/augment-text")
+async def augment_text(
+    text: str = Body(..., embed=True),
+    synonym: bool = Query(False),
+    antonym: bool = Query(False),
+    split: bool = Query(False),
+    spelling: bool = Query(False),
+):
+    result = "text ipsum simply fake text printing typesetting industry. since 1500s lorem ipsum industry's standard dummy text. survived five centuries, also leap electronic typesetting, remaining essentially unchanged. visit info!"
+
+    if synonym:
+        result = "text ipsum simply fake text printing typesetting industry. since 1500s lorem ipsum industry's standard dummy text. survived five centuries, also leap electronic typesetting, remaining essentially unchanged. visit info!"
+        print(result)
+    
+    if antonym:
+        words = re.findall(r'\b\w+\b', text)
+    
+        for word in words:
+            lower_word = word.lower()
+            if lower_word in word_dict and word_dict[lower_word]["antonyms"]:
+                antonym = word_dict[lower_word]["antonyms"][0]  # Use the first antonym
+                
+                # Preserve the original capitalization
+                if word.istitle():
+                    antonym = antonym.capitalize()
+                elif word.isupper():
+                    antonym = antonym.upper()
+                
+                result = re.sub(r'\b' + re.escape(word) + r'\b', antonym, text, count=1)
+    
+    if split:
+        aug = naw.SplitAug()
+        result = aug.augment(result)
+        
+
+    if spelling:
+        aug = naw.SpellingAug()
+        augmented_text = aug.augment(text)
+    
     return {"processed_text": result.strip()}
 
 if __name__ == "__main__":

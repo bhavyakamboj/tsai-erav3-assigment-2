@@ -3,3 +3,5 @@ uvicorn
 nltk
 pytest
 httpx
+nlpaug
+gensim
