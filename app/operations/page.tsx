@@ -3,6 +3,11 @@
 import { Fragment, useState } from 'react';
 import { FaFileAlt, FaMicrophone, FaImage, FaCube } from 'react-icons/fa';
 import React from 'react';
+import TextOperations from './text/page'
+import ImageOperations from './image/page'
+import AudioOperations from './audio/page'
+import ThreeDOperations from './three-d/page'
+
 
 export default function Operations() {
   const [selectedOperation, setSelectedOperation] = useState<string | null>(null);
@@ -10,13 +15,13 @@ export default function Operations() {
   const renderComponent = () => {
     switch (selectedOperation) {
       case 'text':
-        return <TextComponent />;
+        return <TextOperations />;
       case 'image':
-        return <ImageComponent />;
+        return <ImageOperations />;
       case 'audio':
-        return <AudioComponent />;
+        return <AudioOperations />;
       case 'three-d':
-        return <ThreeDComponent />;
+        return <ThreeDOperations />;
       default:
         return <Hero />;
     }
@@ -60,22 +65,6 @@ function Hero() {
       <h3>Select an operation to get started</h3>
     </Fragment>
   );
-}
-
-function TextComponent() {
-  return <div>Text Component</div>;
-}
-
-function ImageComponent() {
-  return <div>Image Component</div>;
-}
-
-function AudioComponent() {
-  return <div>Audio Component</div>;
-}
-
-function ThreeDComponent() {
-  return <div>3D Component</div>;
 }
 
 const containerStyle: React.CSSProperties = {
