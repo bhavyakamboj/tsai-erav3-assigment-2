@@ -13,7 +13,7 @@ export default function Home() {
     return (
         <div className="min-h-full">
             <nav className="bg-gray-800">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-full px-2 sm:px-2 lg:px-2">
                     <div className="flex h-16 items-center justify-between">
                         <div className="flex items-center">
                             <div className="shrink-0">
@@ -44,7 +44,7 @@ export default function Home() {
                                     </button>
                                     <div  hidden className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabIndex="-1">
                                         <a href="#" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-0">Your Profile</a>
-                                        <a href="#" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-1">Settings</a>
+                                        <a href="#" className="lock px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-1">Settings</a>
                                         <a href="#" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-2">Sign out</a>
                                     </div>
                                 </div>
@@ -96,12 +96,12 @@ export default function Home() {
                 </div>
             </nav>
             <header className="bg-white shadow">
-                <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-full px-2 py-2 sm:px-2 lg:px-2">
                     <h3 className="text-xl font-bold tracking-tight text-gray-900">Dashboard</h3>
                 </div>
             </header>
             <main>
-            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-full px-2 py-2 sm:px-2 lg:px-2">
                     <Operations />
                 </div>
             </main>
