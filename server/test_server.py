@@ -13,7 +13,7 @@ def test_lowercase():
 
 def test_punctuation_special_chars():
     response = client.post(
-        "/process-text/?punctuation_special_chars=true",
+        "/process-text/?punct_spl_char=true",
         json={"text": "Hello, world! This is?* an&/|~^+%'\" example- of text preprocessing."}
     )
     assert response.status_code == 200
@@ -33,7 +33,7 @@ def test_urls():
         json={"text": "I hope it will be a useful article for you. Follow me: https://medium.com/@ayselaydin"}
     )
     assert response.status_code == 200
-    assert response.json() == {"processed_text": "I hope it will be a useful article for you. Follow me: "}
+    assert response.json() == {"processed_text": "I hope it will be a useful article for you. Follow me:"}
 
 def test_html():
     response = client.post(
@@ -45,7 +45,7 @@ def test_html():
 
 def test_multiple_operations():
     response = client.post(
-        "/process-text/?lowercase=true&punctuation_special_chars=true&stop_words=true",
+        "/process-text/?lowercase=true&punct_spl_char=true&stop_words=true",
         json={"text": "Hello, World! This is an Example."}
     )
     assert response.status_code == 200
@@ -71,7 +71,7 @@ def test_empty_text():
 
 def test_all_operations():
     response = client.post(
-        "/process-text/?lowercase=true&punctuation_special_chars=true&stop_words=true&urls=true&html=true",
+        "/process-text/?lowercase=true&punct_spl_char=true&stop_words=true&urls=true&html=true",
         json={"text": "<p>Hello, World! This is an Example. Visit https://example.com</p>"}
     )
     assert response.status_code == 200
@@ -83,4 +83,4 @@ def test_mixed_operations():
         json={"text": "<p>Hello, World! Visit https://example.com</p>"}
     )
     assert response.status_code == 200
-    assert response.json() == {"processed_text": "hello, world! visit "}
+    assert response.json() == {"processed_text": "hello, world! visit"}

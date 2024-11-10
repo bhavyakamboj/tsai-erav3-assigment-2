@@ -1,22 +1,64 @@
-import { redirect } from 'next/navigation';
+'use client'
+import { useState } from 'react';
 
 export default function TextOperations() {
+  const [inputText, setInputText] = useState("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Since the 1500s, Lorem Ipsum has been the industry's standard dummy text. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Visit https://example.com for more info!");
+  const [processedText, setProcessedText] = useState("");
+  const [augmentedText, setAugmentedText] = useState("");
+  const [options, setOptions] = useState({
+    lowercasing: false,
+    'punctuation_special_chars': false,
+    'stop-words': false,
+    'remove-urls': false,
+    'remove-html': false,
+  });
 
-  const inputText = " \
-    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Since the 1500s, Lorem Ipsum has been the industry's standard dummy text. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Visit https://example.com for more info! \
-The quick brown fox jumps over the lazy dog. This sentence contains every letter of the alphabet. <b>This is bold text.</b> HTML tags like \<a href=\"https:\/\/google.com\">links</a> should be removed. Stop words such as \"and\", \"the\",, \"should\", \"now\" are common. \
-Running, runs, and ran are forms of the word \"run\". Similarly, swimming, swims, and swam are forms of the word \"swim\". The process of stemming and lemmatization will help in reducing these words to their base forms. Tokenization will break this text into individual words or tokens, which is essential for further processing. \
-Consider the following: \"Hello, World!\" is a common phrase used in programming. It includes punctuation and special characters that need to be removed. Additionally, URLs like https://another-example.org and email addresses such as example@example.com should be filtered out. \
-Normalization involves converting text to a standard format. This includes converting all text to lowercase, removing diacritics, and ensuring consistent spacing. For instance, the phrase \"Café\" should be normalized to \"cafe\". \
-In the world of Natural Language Processing (NLP), these operations are crucial for preparing text data for analysis. They help in cleaning and structuring the data, making it suitable for machine learning models. \
-Consider a scenario where you have a dataset of customer reviews. These reviews may contain a mix of uppercase and lowercase letters, punctuation, URLs, and HTML tags. By applying the operations mentioned above, youcan transform the raw text into a clean and structured format. This will enable you to perform sentiment analysis, topic modeling, or any other text-based analysis effectively. \
-In conclusion, text pre-processing is a vital step in the data preparation pipeline. It ensures that the text data is in a consistent and usable format, allowing for accurate and meaningful analysis. Whether you are working with social media data, customer reviews, or any other form of text data, these operations will help you extract valuable insights and make informed decisions.";
-  const processedText = "fgfgdfg";
-  const augmentedText = "vfsfs";
+  const optionToQueryParamMap = {
+    'lowercasing': 'lowercase',
+    'punctuation_special_chars': 'punt_spl_char',
+    'stop-words': 'stop_words',
+    'remove-urls': 'urls',
+    'remove-html': 'html',
+  };
+
+  const handleOptionChange = (e) => {
+    setOptions({ ...options, [e.target.id]: e.target.checked });
+  };
+
+  const handleProcessText = async () => {
+    try {
+      const queryParams = new URLSearchParams();
+      Object.entries(options).forEach(([key, value]) => {
+        if (value) {
+          queryParams.append(optionToQueryParamMap[key], 'true');
+        }
+      });
+
+      const url = `http://localhost:8000/process-text?${queryParams.toString()}`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: inputText }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setProcessedText(data.processed_text);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center w-full justify-center h-screen bg-gray-100 p-2">
-      <h1 className="text-4xl font-bold text-gray-800 mb-4" hidden={processedText!==""}>Text for Pre-Processing</h1>
-      <h1 className="text-4xl font-bold text-gray-800 mb-4" hidden={processedText===""}>Pre-Processed Text</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-4" hidden={processedText!==""}>Text for Pre-Processing</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-4" hidden={processedText===""}>Pre-Processed Text</h1>
       <div
         className="text-left w-full"
         id="pre-processing" hidden={processedText !== ""}>
@@ -28,6 +70,8 @@ In conclusion, text pre-processing is a vital step in the data preparation pipel
               type="checkbox"
               id="lowercasing"
               className="mr-2"
+              checked={options.lowercasing}
+              onChange={handleOptionChange}
             />
             <label
               htmlFor="lowercasing"
@@ -37,11 +81,13 @@ In conclusion, text pre-processing is a vital step in the data preparation pipel
           <div>
             <input
               type="checkbox"
-              id="remove-punctuation"
+              id="punctuation_special_chars"
               className="mr-2"
+              checked={options['punctuation_special_chars']}
+              onChange={handleOptionChange}
             />
             <label
-              htmlFor="remove-punctuation"
+              htmlFor="punctuation_special_chars"
               className="text-gray-700">
               Removing Punctuation & Special Characters
             </label>
@@ -51,6 +97,8 @@ In conclusion, text pre-processing is a vital step in the data preparation pipel
               type="checkbox"
               id="stop-words"
               className="mr-2"
+              checked={options['stop-words']}
+              onChange={handleOptionChange}
             />
             <label
               htmlFor="stop-words"
@@ -63,6 +111,8 @@ In conclusion, text pre-processing is a vital step in the data preparation pipel
               type="checkbox"
               id="remove-urls"
               className="mr-2"
+              checked={options['remove-urls']}
+              onChange={handleOptionChange}
             />
             <label
               htmlFor="remove-urls"
@@ -74,7 +124,9 @@ In conclusion, text pre-processing is a vital step in the data preparation pipel
             <input 
             type="checkbox" 
             id="remove-html" 
-            className="mr-2" 
+            className="mr-2"
+            checked={options['remove-html']}
+            onChange={handleOptionChange}
             />
             <label 
             htmlFor="remove-html" 
@@ -82,34 +134,24 @@ In conclusion, text pre-processing is a vital step in the data preparation pipel
               Removal of HTML Tags
             </label>
           </div>
-          <div>
-            <input type="checkbox" id="stemming-lemmatization" className="mr-2" />
-            <label htmlFor="stemming-lemmatization" className="text-gray-700">Stemming & Lemmatization</label>
-          </div>
-          <div>
-            <input type="checkbox" id="tokenization" className="mr-2" />
-            <label htmlFor="tokenization" className="text-gray-700">Tokenization</label>
-          </div>
-          <div>
-            <input type="checkbox" id="text-normalization" className="mr-2" />
-            <label htmlFor="text-normalization" className="text-gray-700">Text Normalization</label>
-          </div>
         </div>
 
-        <button className="mt-8 px-6 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700">
+        <button 
+          className="mt-8 px-6 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700"
+          onClick={handleProcessText}
+        >
           Apply pre-processing
         </button>
       </div>
+
       <div className="text-left w-full p-2" 
           id="input-pre-process" 
           hidden = {processedText === "" || augmentedText === ""}>
         <p>Input Text</p>
         <textarea
           className="w-full h-48 p-4 border border-gray-300 rounded-md"
-          defaultValue={inputText}
-          value={inputText}
+          defaultChecked={inputText}
           id = "input"
-          disabled
         />
       </div>
       <div className="text-left w-full p-2" id="input-pre-process" hidden={processedText !== ""}>
@@ -128,9 +170,10 @@ In conclusion, text pre-processing is a vital step in the data preparation pipel
           className="w-full h-48 p-4 border border-gray-300 rounded-md"
           placeholder="Result of pre-processing here..."
           id="output-pre-process"
+          value={processedText}
           disabled />
       </div>
-      <h1 className="text-4xl font-bold text-gray-800 mb-4" hidden={processedText === ""}>Text Augmentation</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-4" hidden={processedText === ""}>Text Augmentation</h1>
       <div
         className="text-left w-full"
         id="pre-processing" 
@@ -215,7 +258,7 @@ In conclusion, text pre-processing is a vital step in the data preparation pipel
       augmentedText !== ""}>
         <textarea
           className="w-full h-48 p-4 border border-gray-300 rounded-md"
-          defaultValue={processedText}
+          value={processedText}
           id="input-augment"
         />
       </div>
