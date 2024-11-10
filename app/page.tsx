@@ -6,23 +6,25 @@ export default function Home() {
   return (
     <div style={containerStyle}>
       <Hero />
-      <div style={iconContainerStyle}>
-        <Link href="/text" style={linkStyle}>
-          <FaFileAlt size={50} />
-          <p>Text</p>
-        </Link>
-        <Link href="/audio" style={linkStyle}>
-          <FaMicrophone size={50} />
-          <p>Audio</p>
-        </Link>
-        <Link href="/video" style={linkStyle}>
-          <FaVideo size={50} />
-          <p>Video</p>
-        </Link>
-        <Link href="/3d" style={linkStyle}>
-          <FaCube size={50} />
-          <p>3D</p>
-        </Link>
+      <div style={iconWrapperStyle}>
+        <div style={iconContainerStyle}>
+          <Link href="/text" style={linkStyle}>
+            <FaFileAlt size={50} />
+            <p>Text</p>
+          </Link>
+          <Link href="/audio" style={linkStyle}>
+            <FaMicrophone size={50} />
+            <p>Audio</p>
+          </Link>
+          <Link href="/video" style={linkStyle}>
+            <FaVideo size={50} />
+            <p>Video</p>
+          </Link>
+          <Link href="/3d" style={linkStyle}>
+            <FaCube size={50} />
+            <p>3D</p>
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -47,12 +49,24 @@ const containerStyle: React.CSSProperties = {
 
 const heroStyle: React.CSSProperties = {
   marginBottom: '40px',
+  fontFamily: '"Impact", "Arial Black", sans-serif',
+  fontSize: '2.5rem',
+  color: '#333',
+};
+
+const iconWrapperStyle: React.CSSProperties = {
+  width: '70%',
+  display: 'flex',
+  justifyContent: 'center',
+  padding: '20px',
+  borderRadius: '8px',
 };
 
 const iconContainerStyle: React.CSSProperties = {
   display: 'grid',
   gridTemplateColumns: 'repeat(2, 1fr)',
   gap: '20px',
+  width: '100%',
 };
 
 const linkStyle: React.CSSProperties = {
