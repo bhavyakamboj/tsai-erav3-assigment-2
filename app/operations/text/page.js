@@ -64,7 +64,9 @@ const [augmentedText, setAugmentedText] = useState("");
 
       const data = await response.json();
       setProcessedText(data.processed_text);
-      console.log(data.processed_text)
+
+      console.log("processed text", data.processed_text)
+
     } catch (error) {
       console.error('Error:', error);
     }
@@ -86,7 +88,7 @@ const [augmentedText, setAugmentedText] = useState("");
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: inputText }),
+        body: JSON.stringify({ text: processedText }),
       });
 
       if (!response.ok) {
@@ -95,11 +97,10 @@ const [augmentedText, setAugmentedText] = useState("");
 
       const data = await response.json();
       
-      console.log(response.data);
-      
       setAugmentedText(data.augmented_text);
-      setAugmentedText("text ipsum simply fake text printing typesetting industry. since 1500s lorem ipsum industry's standard dummy text. survived five centuries, also leap electronic typesetting, remaining essentially unchanged. visit info!");
-      console.log(augmentedText)
+      // setAugmentedText("text ipsum simply fake text printing typesetting industry. since 1500s lorem ipsum industry's standard dummy text. survived five centuries, also leap electronic typesetting, remaining essentially unchanged. visit info!");
+      console.log("augmented text ",response.data);
+
     } catch (error) {
       console.error('Error:', error);
     }
